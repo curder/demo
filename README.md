@@ -17,7 +17,7 @@ ssh-keygen -t rsa -C 'your_email@domain.com' -f ~/.ssh/your_name
 > 将上面的`your_email@domain.com`换成你自己的
 > `-f`参数指定生成的密匙存放的路径，保证目录下不重复。
 
-执行完上面的参数将会生成两个文件` ~/.ssh/your_name`和` ~/.ssh/your_name.pub`
+执行完上面的参数将会生成两个文件`~/.ssh/your_name`和`~/.ssh/your_name.pub`
 
 ### 修改SSH配置
 
@@ -108,8 +108,8 @@ xxxxxx，你好，你已经通过 SSH 协议认证 Coding.net 服务，这是一
 ### 生成指定名字的密钥
 
 ```
-ssh-keygen -t rsa -C "your_email@domain.com" -f ~/.ssh/your_email_github
-ssh-keygen -t rsa -C "your_other_email@domain.com" -f ~/.ssh/your_other_email_github
+ssh-keygen -t rsa -C "your_email@domain.com" -f ~/.ssh/your_name_github
+ssh-keygen -t rsa -C "your_other_email@domain.com" -f ~/.ssh/your_other_name_github
 ```
 
 > 将上面的`your_email@doamin.com`和 `your_other_email@domain.com`换成你自己的
@@ -117,18 +117,18 @@ ssh-keygen -t rsa -C "your_other_email@domain.com" -f ~/.ssh/your_other_email_gi
 
 执行完上面的操作后将会生成四个文件
 
-* `~/.ssh/your_email_github` 和 `~/.ssh/your_email_github.pub`
+* `~/.ssh/your_name_github` 和 `~/.ssh/your_name_github.pub`
 
-* `~/.ssh/you_other_github` 和 `~/.ssh/your_other_email_github.pub`
+* `~/.ssh/you_other_name_github` 和 `~/.ssh/you_other_name_github.pub`
 
 ### 将公钥复制到托管平台
 
 #### 分别获取两个账号的公钥内容
 
 ```
-cat ~/.ssh/your_email_github.pub
+cat ~/.ssh/your_name_github.pub
 
-cat ~/.ssh/your_other_email_github.pub
+cat ~/.ssh/you_other_name_github.pub
 ```
 
 #### 修改SSH配置文件
@@ -140,15 +140,15 @@ vim ~/.ssh/config
 添加如下代码：
 
 ```
-Host you_email.github.com
+Host you_name.github.com
 HostName github.com
 User git
-IdentityFile ~/.ssh/your_email_github
+IdentityFile ~/.ssh/your_name_github
 
-Host your_other_email.github.com
+Host your_other_name.github.com
 HostName github.com
 User git
-IdentityFile ~/.ssh/your_other_email_github
+IdentityFile ~/.ssh/your_other_name_github
 ```
 
 #### 添加公钥至托管平台
@@ -166,17 +166,27 @@ IdentityFile ~/.ssh/your_other_email_github
 例如原来的url是：
 
 ```
-git@github.com:your_email/projectName.git
+git@github.com:your_name/projectName.git
 ```
+
 需要改成：
 
 ```
-git@your_email.github.com:your_email/projectName.git
+git@your_name.github.com:your_name/projectName.git
 ```
 
 > `your_other_email` 的配置也是如此。
 
-### 测试提交
+### 测试
+
+```
+ssh -T git@your_name.github.com
+Hi xxxxxx! You've successfully authenticated, but GitHub does not provide shell access.
+
+
+ssh -T git@you_other_name.github.com
+Hi xxxxxx! You've successfully authenticated, but GitHub does not provide shell access.
+```
 
 
 ### 配置多账号后修改旧仓库设置
@@ -209,14 +219,14 @@ git@your_email.github.com:your_email/projectName.git
 ### 生成指定名字的密钥
 
 ```
-ssh-keygen -t rsa -C "your_email@domain.com" -f ~/.ssh/your_email
-ssh-keygen -t rsa -C "your_other_email@domain.com" -f ~/.ssh/your_other_email
+ssh-keygen -t rsa -C "your_email@domain.com" -f ~/.ssh/your_name
+ssh-keygen -t rsa -C "your_other_email@domain.com" -f ~/.ssh/your_other_name
 ```
 
 > 将上面的`your_email@domain.com`、`your_other@domain.com`换成你自己的
 > `-f`参数指定生成的密匙存放的路径，保证目录下不重复。
 
-执行完上面的参数将会生成四个文件`~/.ssh/your_email`和`~/.ssh/your_email.pub`与`~/.ssh/your_other_email`和`~/.ssh/your_other_email.pub`
+执行完上面的参数将会生成四个文件`~/.ssh/your_name`和`~/.ssh/your_name.pub`与`~/.ssh/your_other_name`和`~/.ssh/your_other_name.pub`
 
 ### 将公钥复制到托管平台
 
@@ -229,20 +239,38 @@ vim ~/.ssh/config
 添加如下代码：
 
 ```
-Host github.com
-User your_email@domain.com
-IdentityFile ~/.ssh/your_email_coding
+# first 
+Host your_name.github.com
+HostName github.com
+IdentityFile ~/.ssh/your_name
+
+Host your_name.coding.net
+HostName git.coding.net
+IdentityFile ~/.ssh/your_name
+
+
+# Second
+
+Host your_other_name.github.com
+HostName github.com
+IdentityFile ~/.ssh/your_other_name
+
+Host your_other_name.coding.net
+HostName git.coding.net
+IdentityFile ~/.ssh/your_other_name
 ```
 
-> 配置SSH，请求域名`github.com`或`www.github.com`的域名将使用指定的文件密钥。
+> 配置SSH，请求域名`github.com`的域名将使用指定的文件密钥。
 
 
 #### 获取公钥内容
 
 ```
-cat ~/.ssh/your_email.pub
-cat ~/.ssh/your_other_email.pub
+cat ~/.ssh/your_name.pub
+cat ~/.ssh/your_other_name.pub
 ```
+
+> 注意：这里获取的公钥的内容。
 
 通过上面的命令获取到公钥的内容。
 
@@ -259,12 +287,22 @@ cat ~/.ssh/your_other_email.pub
 ##### 测试
 
 ```
-ssh -T git@git.coding.net
+ssh -T git@your_name.github.com
+ssh -T git@your_other_name.github.com
+ssh -T git@your_name.coding.net
+ssh -T git@your_other_name.coding.net
 ```
-成功后看到如下信息：
+
+**Coding** 成功后看到如下信息：
 
 ```
 Warning: Permanently added the RSA host key for IP address '***.***.***.***' to the list of known hosts.
 Coding 提示: Hello xxxxxx, You've connected to Coding.net via SSH. This is a personal key.
 xxxxxx，你好，你已经通过 SSH 协议认证 Coding.net 服务，这是一个个人公钥
+```
+
+** GitHub** 成功后看到如下信息：
+
+```
+Hi xxxxxx! You've successfully authenticated, but GitHub does not provide shell access.
 ```
